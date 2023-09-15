@@ -18,7 +18,7 @@
         font-size:14px;
     }
 </style>
-{{-- @dd($player_stats) --}}
+{{-- @dd($player_s  tats) --}}
 @php
     $enemyHpPercentage = $enemy['HP']/$enemy['totalHP']*100;
     $playerHpPercentage = $player_stats['HP']/$player_stats['totalHP']*100;
@@ -27,6 +27,7 @@
 
 <div class="flex flex-col">
     <div>Player Lv: {{$player->level}} | HP: {{$player_stats['HP'];}} | XP: {{$player->experience}}</div>
+    <p>Player AC: {{ $player_stats['AC']}} | Enemy AC: {{ $enemy['AC']}} </p>
     <div id="playerxp" class="xp_bar" style="background-image: linear-gradient(90deg, #555 <?=$playerXpPercentage?>%, #222 <?=$playerXpPercentage?>%);">
         <div>XP: {{ round($playerXpPercentage, 2) }}% </div>
     </div>

@@ -14,7 +14,7 @@ class GameController extends Controller
         return view('game.index', ['player' => $player]);
     }
 
-    public function randomStats()
+    public function randomStats(Request $request)
     {
         $user = auth()->user();
         $player = $user->player;
@@ -27,11 +27,13 @@ class GameController extends Controller
         $player->hp = round(10+(($player->CON -10)/2)+(($player->level -1)*(6+(($player->CON -10)/2))));
         $player->bosses = 0;
         $player->save();
+        $request->session()->forget('enemy_stats'); // Remove enemy from session
+        $request->session()->forget('player_stats'); // Remove player from session
 
         return view('game.index', ['player' => $player]);
     }
 
-    public function easy()
+    public function easy(Request $request)
     {
         $user = auth()->user();
         $player = $user->player;
@@ -46,11 +48,13 @@ class GameController extends Controller
         $player->hp = round(10+(($player->CON -10)/2)+(($player->level -1)*(6+(($player->CON -10)/2))));
         $player->bosses = 0;
         $player->save();
+        $request->session()->forget('enemy_stats'); // Remove enemy from session
+        $request->session()->forget('player_stats'); // Remove player from session
 
         return view('game.index', ['player' => $player]);
     }
 
-    public function medium()
+    public function medium(Request $request)
     {
         $user = auth()->user();
         $player = $user->player;
@@ -65,11 +69,13 @@ class GameController extends Controller
         $player->hp = round(10+(($player->CON -10)/2)+(($player->level -1)*(6+(($player->CON -10)/2))));
         $player->bosses = 0;
         $player->save();
+        $request->session()->forget('enemy_stats'); // Remove enemy from session
+        $request->session()->forget('player_stats'); // Remove player from session
 
         return view('game.index', ['player' => $player]);
     }
 
-    public function hard()
+    public function hard(Request $request)
     {
         $user = auth()->user();
         $player = $user->player;
@@ -84,6 +90,8 @@ class GameController extends Controller
         $player->hp = round(10+(($player->CON -10)/2)+(($player->level -1)*(6+(($player->CON -10)/2))));
         $player->bosses = 0;
         $player->save();
+        $request->session()->forget('enemy_stats'); // Remove enemy from session
+        $request->session()->forget('player_stats'); // Remove player from session
 
         return view('game.index', ['player' => $player]);
     }
@@ -107,6 +115,7 @@ class GameController extends Controller
                 elseif ($enemyLevel >=15) {$temp = rand(1, 100); if ($temp > 97) {$ExpHpMultiplier = 4;} elseif ($temp > 91) {$ExpHpMultiplier = 3;} elseif ($temp > 75) {$ExpHpMultiplier = 2;}}
             $enemyHP = $ExpHpMultiplier * (intval(round(10 + (($CON - 10) / 2) + (($enemyLevel - 1) * (6 + (($CON - 10) / 2))))));
             $exp = ($enemyLevel*3)*(($STR + $CON + $DEX)/30)*$ExpHpMultiplier;
+            $armorClass = round(10 + (($DEX-10)/2));
             $enemyStats = [
                 'name' => 'Goblin',
                 'STR'  => $STR,
@@ -117,11 +126,15 @@ class GameController extends Controller
                 'totalHP' => $enemyHP,
                 'exp' => $exp,
                 'multiplier' => $ExpHpMultiplier,
+                'AC' => $armorClass,
             ];
+            $playerDamage = 1+(($player->STR-10)/2); if ($playerDamage <= 0.5) {$playerDamage = 1;}
+            $playerAC = round(10+(($player->DEX-10)/2));
             $playerStats = [
                 'HP' => $player->hp,
                 'totalHP' => $player->hp,
-                'attack_roll' => ($player->Dex-10)/2,
+                'AC' => $playerAC,
+                'damage' => $playerDamage,
             ];
             $request->session()->put('enemy_stats', $enemyStats);
             $request->session()->put('player_stats', $playerStats);
@@ -138,10 +151,20 @@ class GameController extends Controller
         $player = $user->player;
         $enemyStats = $request->session()->get('enemy_stats'); // Initialize or retrieve enemy stats from session
         $playerStats = $request->session()->get('player_stats'); // Initialize or retrieve player stats from session
-        // Perform battle logic here
 
-        $enemyStats['HP'] -= 3; // Here we simply reduce the enemy's HP by 5
-        $playerStats['HP'] -= 1;
+        // Perform battle logic here
+        $playerCritical = 1;
+        $playerD20 = rand(1,20); if ($playerD20 == 1) {$playerCritical--;} elseif ($playerD20 == 20) {$playerCritical++;}
+        $playerAttackRoll = $playerD20+round(($player->DEX-10)/2);
+        $playerSTRModifier = ($player->STR-10)/2; if ($playerSTRModifier <= 1) {$playerSTRModifier = 1;}
+        if ($playerAttackRoll >= $enemyStats['AC']) {$enemyStats['HP'] -= $playerSTRModifier*$playerCritical; }
+
+        $enemyCritical = 1;
+        $enemyD20 = rand(1,20); if ($enemyD20 == 1) {$enemyCritical--;} elseif ($enemyD20 == 20) {$enemyCritical++;}
+        $enemyAttackRoll = $enemyD20+round(($enemyStats['DEX']-10)/2);
+        $enemySTRModifier = ($enemyStats['STR']-10)/2; if ($enemySTRModifier <= 1) {$enemySTRModifier = 1;}
+        if ($enemyAttackRoll >= $playerStats['AC']) {$playerStats['HP'] -= $enemySTRModifier*$enemyCritical; }
+        // dump($enemyStats);
 
         if ($enemyStats['HP'] <= 0) { // Check if enemy is dead
             $experienceBefore = $player->experience;
