@@ -138,11 +138,13 @@ class GameController extends Controller
             ];
             $request->session()->put('enemy_stats', $enemyStats);
             $request->session()->put('player_stats', $playerStats);
+            if (!$request->session()->has('temp_stats')) {$temp_stats = [$enemyStats['HP'], $playerStats['HP']]; $request->session()->put('temp_stats', $temp_stats);}
         } else {
             $enemyStats = $request->session()->get('enemy_stats');
             $playerStats = $request->session()->get('player_stats');
+            $temp_stats = $request->session()->get('temp_stats'); 
         }
-        return view('game.play', ['player' => $player, 'enemy' => $enemyStats, 'player_stats' => $playerStats]);
+        return view('game.play', ['player' => $player, 'enemy' => $enemyStats, 'player_stats' => $playerStats, 'temp_stats' => $temp_stats]);
     }
 
     public function attack(Request $request)
@@ -157,14 +159,16 @@ class GameController extends Controller
         $playerD20 = rand(1,20); if ($playerD20 == 1) {$playerCritical--;} elseif ($playerD20 == 20) {$playerCritical++;}
         $playerAttackRoll = $playerD20+round(($player->DEX-10)/2);
         $playerSTRModifier = ($player->STR-10)/2; if ($playerSTRModifier <= 1) {$playerSTRModifier = 1;}
+        $tempEnemyHP = $enemyStats['HP']; //saving prior hp for animation
         if ($playerAttackRoll >= $enemyStats['AC']) {$enemyStats['HP'] -= $playerSTRModifier*$playerCritical; }
 
         $enemyCritical = 1;
         $enemyD20 = rand(1,20); if ($enemyD20 == 1) {$enemyCritical--;} elseif ($enemyD20 == 20) {$enemyCritical++;}
         $enemyAttackRoll = $enemyD20+round(($enemyStats['DEX']-10)/2);
         $enemySTRModifier = ($enemyStats['STR']-10)/2; if ($enemySTRModifier <= 1) {$enemySTRModifier = 1;}
+        $tempPlayerHP = $playerStats['HP']; //saving prior hp for animation
         if ($enemyAttackRoll >= $playerStats['AC']) {$playerStats['HP'] -= $enemySTRModifier*$enemyCritical; }
-        // dump($enemyStats);
+        $tempHPStats= [$tempEnemyHP, $tempPlayerHP]; //saving prior hp (both player's and enemy's) for animation
 
         if ($enemyStats['HP'] <= 0) { // Check if enemy is dead
             $experienceBefore = $player->experience;
@@ -184,14 +188,16 @@ class GameController extends Controller
 
             $request->session()->forget('enemy_stats'); // Remove enemy from session
             $request->session()->forget('player_stats'); // Remove player from session
+            $request->session()->forget('temp_stats'); // Remove temp stats from session
             return redirect()->action([GameController::class, 'loot']); // Redirect to play to spawn a new enemy
         }
         // Store updated stats back into session
         $request->session()->put('enemy_stats', $enemyStats);
         $request->session()->put('player_stats', $playerStats);
+        $request->session()->put('temp_stats', $tempHPStats);
 
         // Pass data to view
-        return view('game.play', ['player' => $player, 'enemy' => $enemyStats, 'player_stats' => $playerStats]);
+        return view('game.play', ['player' => $player, 'enemy' => $enemyStats, 'player_stats' => $playerStats, 'temp_stats' => $tempHPStats]);
     }
 
     public function loot(Request $request)

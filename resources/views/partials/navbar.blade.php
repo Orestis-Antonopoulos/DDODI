@@ -5,7 +5,7 @@
         <div class="col-md-6 offset-md-4 flex justify-center">
         </div>
         <button class="relative btn btn-primary w-[189px] h-[36px] bg-red-900 hover:bg-red-950 relative" name="mainmenu" value="mainmenu" style="border:solid 1px #ccc; border-radius:10px;">
-            <p class="absolute text-red-700 text-3xl" style="font-family:'BloodThirst'; top:12px; left:50%; transform:translateX(-50%)">{{ __('asdf') }}</p>
+            <p class="absolute text-red-700 text-3xl" style="font-family:'BloodThirst'; top:12px; left:50%; transform:translateX(-50%)">{{ __('Restart') }}</p>
         </button>
     </form>
     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none row mb-0 w-full flex justify-center pt-[50px]">
