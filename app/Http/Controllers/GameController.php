@@ -142,7 +142,7 @@ class GameController extends Controller
         } else {
             $enemyStats = $request->session()->get('enemy_stats');
             $playerStats = $request->session()->get('player_stats');
-            $temp_stats = $request->session()->get('temp_stats'); 
+            $temp_stats = $request->session()->get('temp_stats');
         }
         return view('game.play', ['player' => $player, 'enemy' => $enemyStats, 'player_stats' => $playerStats, 'temp_stats' => $temp_stats]);
     }
@@ -206,7 +206,8 @@ class GameController extends Controller
         $player = $user->player;
         $experienceBefore = $request->session()->get('experience_before');
         $experienceAfter = $request->session()->get('experience_after');
-        return view('game.loot', ['player' => $player, 'experienceBefore' => $experienceBefore, 'experienceAfter' => $experienceAfter]);
+        $levelup = $request->session()->get('level_up');
+        return view('game.loot', ['player' => $player, 'experienceBefore' => $experienceBefore, 'experienceAfter' => $experienceAfter, 'level_up' => $levelup]);
 
     }
 

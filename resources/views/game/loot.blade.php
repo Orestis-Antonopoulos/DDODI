@@ -5,5 +5,6 @@
     @csrf
     <button type="submit">Continue</button>
 </form>
-You earned {{ round($experienceAfter - $experienceBefore) }} exp points.
+<p>You earned {{ round($experienceAfter - $experienceBefore) }} exp points.</p>
+<p>levelup value: {{ $level_up }}</p>
 @endsection
