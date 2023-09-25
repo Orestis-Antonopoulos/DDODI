@@ -1,0 +1,48 @@
+{
+    "funnyNegativeAdjectives": [
+    "clueless","dimwitted","obnoxious","scatterbrained","gullible","half-baked","knuckleheaded","boneheaded","airheaded","dopey",
+    "loony","goofy","cringeworthy","tone-deaf","blockheaded","birdbrained","haphazard","sloppy","inept","dull-witted",
+    "bumbling","unhinged","absentminded","daft","crass","snarky","sleazy","scatterbrained","lame-brained","wacky",
+    "tactless","kooky","flaky","ditsy","doddering","gawky","nitwitted","oafish","klutzy","zany"],
+    "funnyMeleeWeapons": [
+    "Chicken","Noodle","Banana","Spaghetti","Lollipop","Spatula","Clippers","Baguette","Stick","Toothpick",
+    "Fan","Accordion","Tape","Cone","Plunger","Swatter","Crocs","Carrot","Candy","Shoelace",
+    "Grater","Ladle","Shovel","Teacup","Quill","Tambourine","Vacuum","Fork","Slinky","Umbrella",
+    "Chopsticks","Boomerang","Cushion"
+    ],
+    "funnyWeaponTitles": [
+    "of Quackery","the Tickler","of Eternal Confusion","the Underwhelming","of Facepalms","the Meme-lord","of Rubber Duckyness","of Mom's Spaghetti","of Infinite Silliness","the Unsanitary",
+    "the Disorienter","of Mild Discomfort","of Awkward Silences","of Emotional Baggage","the Narcoleptic","the Fashion Disaster","of Glitter Bombs","the Dad-Joker","of Crippling Debt","the Couch Potato",
+    "of Cat Memes","of Dubious Consent","of Regrettable Decisions","the Hangry","of Nostalgia Trips","of Uselessness","the Passive-Aggressive","of Awful Puns","of Cringe","the Distractor",
+    "of Instant Regret","the Unreliable","of Sporkiness","of Procrastination","of Identity Crises","of Inception Horns","the Absurd","of Existential Dread","of Epic Fails","the Overthinker",
+    "of Irrational Fears","of Spoilers","the Cringe-Master","of Bad Hair Days","of Forgotten Passwords","of Mismatched Socks","the Tumbleweed Summoner","of Auto-Correct","of FOMO","of Dad Bods",
+    "the Melodramatic","of Guilty Pleasures","the Window Shopper","of Last-Season Trends","the Keyboard Warrior","of Plot Twists","the Buzzkiller","of Social Awkwardness","of Deja Vu","the Monday Hater",
+    "of Third Wheels","of Unfortunate Typos","the Couch Surfer","of Ghosting","of Binge-Watching","of Left Swipes","the Daydreamer","of Existential Crises","of Unfulfilled Promises","of Tinfoil Hats",
+    "of Late Replies","of Fake News"
+    ],
+    "oneHandedMeleeWeapons": [
+    "Sword","Dagger","Mace","Axe","Whip","Sickle","Flail","Cutlass","Rapier","Scimitar",
+    "Wakizashi","Gladius","Dirk","Falchion","Kukri","Jian","Kris","Estoc","Machete","Claw",
+    "Hatchet","Shortsword","Main-Gauche","Sai","Tonfa","Stiletto","Cleaver","Cudgel","Club","Shiv",
+    "Tomahawk","Epee","Saber","FoamStick","Nunchaku","Katana","Scalpel","Khopesh","Glave","Pickaxe"
+    ],
+    "epicAdjectives": [
+    "Legendary","Mythical","Divine","Majestic","Epic","Heroic","Celestial","Venerable","Ancient","Mighty",
+    "Valorous","Sovereign","Exalted","Imperial","Titanic","Noble","Ethereal","Invincible","Indomitable","Eternal",
+    "Glorious","Sacred","Sublime","Radiant","Immortal","Dauntless","Grandiose","Seraphic","Formidable","Supreme",
+    "Phenomenal","Resplendent","Regal","Astral","Paramount","Illustrious","Awe-Inspiring","Ineffable","Magnificent","Stupendous",
+    "Incredible","Unyielding"
+    ],
+    "epicWeaponNames": [
+    "Excalibur","Stormbringer","Mjolnir","Soulreaver","Doomhammer","Moonfang","Starshard","Nemesis","Oathkeeper","Darkbane",
+    "Frostbite","Sunstrike","Abyssal","Skyrender","Galaxyblade","Voidcleaver","Godslayer","Eclipsor","Thunderfist","Lifedrinker",
+    "Deathbringer","Windstriker","Titanclaw","Runeblade","Omega","Celestia","Widowmaker","Dragonclaw","Soulbound","Stardust",
+    "Harbinger","Talon","Bloodletter","Eagleeye","Nightfall","Pandemonium","Solstice","Worldshaker","Orion","Vortex"
+    ],
+    "epicWeaponSuffixes": [
+    "the Eternal","the Invincible","of Legends","the Conqueror","the Majestic","of Titans","of Fates","the Undying","the Relentless","of Kings",
+    "the Tempest","the Immortal","of Destiny","the Exalted","the Valiant","of Champions","the Supreme","of Divinity","the Marvel","the Pinnacle",
+    "of Eternity","the Sovereign","of Glory","the Paragon","of Infinity","the Apex","the Zenith","of Elders","the Stalwart","of Triumph",
+    "the Sentinel","the Phantasm","of Serenity","the Cosmic","the Imperator","of Mysteries","the Arcane","the Resplendent","of Wonders"
+    ]
+}

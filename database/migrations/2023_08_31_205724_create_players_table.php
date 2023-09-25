@@ -24,6 +24,7 @@ return new class extends Migration
             $table->integer('experience');
             $table->integer('hp');
             $table->integer('bosses');
+            $table->integer('healing_potions')->default(0);
         });
     }
 

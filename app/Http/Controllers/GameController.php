@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Equipment;
 
 class GameController extends Controller
 {
@@ -29,6 +30,7 @@ class GameController extends Controller
         $player->save();
         $request->session()->forget('enemy_stats'); // Remove enemy from session
         $request->session()->forget('player_stats'); // Remove player from session
+        Equipment::where('player_id', $player->id)->delete();
 
         return view('game.index', ['player' => $player]);
     }
@@ -50,6 +52,7 @@ class GameController extends Controller
         $player->save();
         $request->session()->forget('enemy_stats'); // Remove enemy from session
         $request->session()->forget('player_stats'); // Remove player from session
+        Equipment::where('player_id', $player->id)->delete();
 
         return view('game.index', ['player' => $player]);
     }
@@ -71,6 +74,7 @@ class GameController extends Controller
         $player->save();
         $request->session()->forget('enemy_stats'); // Remove enemy from session
         $request->session()->forget('player_stats'); // Remove player from session
+        Equipment::where('player_id', $player->id)->delete();
 
         return view('game.index', ['player' => $player]);
     }
@@ -92,6 +96,7 @@ class GameController extends Controller
         $player->save();
         $request->session()->forget('enemy_stats'); // Remove enemy from session
         $request->session()->forget('player_stats'); // Remove player from session
+        Equipment::where('player_id', $player->id)->delete();
 
         return view('game.index', ['player' => $player]);
     }
@@ -142,6 +147,7 @@ class GameController extends Controller
         } else {
             $enemyStats = $request->session()->get('enemy_stats');
             $playerStats = $request->session()->get('player_stats');
+            if (!$request->session()->has('temp_stats')) {$temp_stats = [$enemyStats['HP'], $playerStats['HP']]; $request->session()->put('temp_stats', $temp_stats);}
             $temp_stats = $request->session()->get('temp_stats');
         }
         return view('game.play', ['player' => $player, 'enemy' => $enemyStats, 'player_stats' => $playerStats, 'temp_stats' => $temp_stats]);
@@ -189,6 +195,43 @@ class GameController extends Controller
             $request->session()->forget('enemy_stats'); // Remove enemy from session
             $request->session()->forget('player_stats'); // Remove player from session
             $request->session()->forget('temp_stats'); // Remove temp stats from session
+
+            //Random loot:
+            $dropDecide= rand(20,27);
+            function generateLoot($enemy['level']) {
+                $lootArray = [0, 0, 0];  // Initialize the loot array with zeros
+                $dropChance = 3 * $enemy['level'];  // Calculate drop chance based on enemy level
+                
+                foreach ($lootArray as $key => $value) {
+                    $randomNumber = rand(1, 100);  // Generate a random number between 1 and 100
+                    if ($randomNumber <= $dropChance) {
+                        // If the random number is within the drop chance, decide what to drop
+                        $itemTypeRandom = rand(1, 100);  // Another random number to decide the type of item
+                        if ($itemTypeRandom <= 75) {
+                            $lootArray[$key] = 1;  // 75% chance to drop item "1"
+                        } else {
+                            $lootArray[$key] = 2;  // 25% chance to drop item "2"
+                        }
+                    }
+                }
+                
+                return $lootArray;
+            }
+
+
+            $droptype="";
+            if (($dropDecide >=0) && ($dropDecide <20)) {$droptype="potion";}
+            elseif (($dropDecide >=20) && ($dropDecide <28)) {$droptype="weapon";}
+            elseif (($dropDecide >=28) && ($dropDecide <36)) {$droptype="offhand";}
+            elseif (($dropDecide >=36) && ($dropDecide <44)) {$droptype="helmet";}
+            elseif (($dropDecide >=44) && ($dropDecide <52)) {$droptype="torso";}
+            elseif (($dropDecide >=52) && ($dropDecide <60)) {$droptype="legs";}
+            elseif (($dropDecide >=60) && ($dropDecide <68)) {$droptype="boots";}
+            elseif (($dropDecide >=68) && ($dropDecide <76)) {$droptype="gloves";}
+            elseif (($dropDecide >=76) && ($dropDecide <84)) {$droptype="necklace";}
+            elseif (($dropDecide >=84) && ($dropDecide <92)) {$droptype="earing";}
+            elseif (($dropDecide >=92) && ($dropDecide <100)) {$droptype="ring";}
+
             return redirect()->action([GameController::class, 'loot']); // Redirect to play to spawn a new enemy
         }
         // Store updated stats back into session

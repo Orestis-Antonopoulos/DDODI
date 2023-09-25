@@ -8,6 +8,22 @@
     .navbar {
         display:none;
     }
+    @keyframes blink-text {
+  0% {
+    color: #f00;
+  }
+  50% {
+    color: #300;    
+  }
+  100% {
+    color: #f00;
+  }
+}
+
+.blink-text {
+  animation: blink-text linear 1.5s infinite;
+}
+
 </style>
 <div class="container mx-auto">
     <div class="flex justify-center items-center" style="height:100vh;">
@@ -40,16 +56,22 @@
 
                         <!-- Password -->
                         <div class="row mb-3 flex flex-col items-center">
-                            <label for="password" class="col-md-4 col-form-label text-md-end text-white">{{ __('Password') }}</label>
+                                @if ($errors->has('password'))
+                                <label for="password" class="col-md-4 col-form-label text-md-end text-red-500 blink-text">
+                                    {{ __('Wrong password, try again') }}
+                                @else
+                                <label for="password" class="col-md-4 col-form-label text-md-end text-white">
+                                    {{ __('Password') }}
+                                @endif</label>
 
                             <div class="col-md-6 p-1" style=" border-radius:10px; border:solid 2px #ccc;  background-color:#333">
                                 <input style="background-color:#333; color:#ccc" id="password" type="password" class="text-center form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
 
-                                @error('password')
+                                <!-- @error('password')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
-                                @enderror
+                                @enderror -->
                             </div>
                         </div>
 
