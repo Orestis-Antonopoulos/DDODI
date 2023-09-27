@@ -160,15 +160,14 @@ class GameController extends Controller
         $enemyStats = $request->session()->get('enemy_stats'); // Initialize or retrieve enemy stats from session
         $playerStats = $request->session()->get('player_stats'); // Initialize or retrieve player stats from session
 
-        // Perform battle logic here
-        $playerCritical = 1;
+        $playerCritical = 1; //Damage to Enemy
         $playerD20 = rand(1,20); if ($playerD20 == 1) {$playerCritical--;} elseif ($playerD20 == 20) {$playerCritical++;}
         $playerAttackRoll = $playerD20+round(($player->DEX-10)/2);
         $playerSTRModifier = ($player->STR-10)/2; if ($playerSTRModifier <= 1) {$playerSTRModifier = 1;}
         $tempEnemyHP = $enemyStats['HP']; //saving prior hp for animation
         if ($playerAttackRoll >= $enemyStats['AC']) {$enemyStats['HP'] -= $playerSTRModifier*$playerCritical; }
 
-        $enemyCritical = 1;
+        $enemyCritical = 1; //Damage to Player
         $enemyD20 = rand(1,20); if ($enemyD20 == 1) {$enemyCritical--;} elseif ($enemyD20 == 20) {$enemyCritical++;}
         $enemyAttackRoll = $enemyD20+round(($enemyStats['DEX']-10)/2);
         $enemySTRModifier = ($enemyStats['STR']-10)/2; if ($enemySTRModifier <= 1) {$enemySTRModifier = 1;}
@@ -192,45 +191,82 @@ class GameController extends Controller
             $request->session()->put('experience_after', $experienceAfter);
             $request->session()->put('level_up', $levelup);
 
+
+
+            //Random loot formula START (type, name, special abilities)
+                $dropDecide= rand(20,27); //Default = rand(0,99) //Type of loot
+                $specialabilities=[];
+                $name= "";
+                $droptype="";
+                $SAResults = [];
+
+                for ($i=3; $i>0; $i--) {
+                    $chance = rand(1,6); //Default = rand(1,100) //Chance for special ability
+                    $multiplier = 3*$enemyStats['level'];
+                    if ($chance <= $multiplier) {
+                        $chance2 = rand(1,100);
+                        if ($chance2 <= 75) {
+                            array_push($specialabilities, 1);
+                        } else {
+                            array_push($specialabilities, 2);
+                        }
+                    } else {
+                        array_push($specialabilities, 0);
+                    }
+                };
+
+                if (($dropDecide >=0) && ($dropDecide <20)) {$droptype="potion";}
+                elseif (($dropDecide >=20) && ($dropDecide <28)) {$droptype="weapon";
+                    $weaponNameList = json_decode(file_get_contents(public_path('/names/weaponNames.json')), true);
+                    if ($specialabilities[0] == 1) { // Weapon Adjective
+                        $randomIndex = array_rand($weaponNameList['epicAdjectives']);
+                        $name .= $weaponNameList['epicAdjectives'][$randomIndex] . " ";
+                    } elseif ($specialabilities[0] == 2) {
+                        $randomIndex = array_rand($weaponNameList['funnyAdjectives']);
+                        $name .= $weaponNameList['funnyAdjectives'][$randomIndex] . " ";
+                    }
+
+                    if ($specialabilities[1] == 0) { //Weapon Type
+                        $randomIndex = array_rand($weaponNameList['weapons']);
+                        $name .= $weaponNameList['weapons'][$randomIndex] . " ";
+                    } elseif ($specialabilities[1] == 1) {
+                        $randomIndex = array_rand($weaponNameList['epicWeapons']);
+                        $name .= $weaponNameList['epicWeapons'][$randomIndex] . " ";
+                    } elseif ($specialabilities[1] == 2) {
+                        $randomIndex = array_rand($weaponNameList['funnyWeapons']);
+                        $name .= $weaponNameList['funnyWeapons'][$randomIndex] . " ";
+                    }
+
+                    if ($specialabilities[2] == 1) { // Weapon Suffixe
+                        $randomIndex = array_rand($weaponNameList['epicSuffixes']);
+                        $name .= $weaponNameList['epicSuffixes'][$randomIndex];
+                    } elseif ($specialabilities[2] == 2) {
+                        $randomIndex = array_rand($weaponNameList['funnySuffixes']);
+                        $name .= $weaponNameList['funnySuffixes'][$randomIndex];
+                    }
+                    $name = rtrim($name);
+                    foreach ($specialabilities as $sa) {
+                        if ($sa == 0) {null;
+                    } elseif ($sa == 1) {
+                        // array_push($SAResults, array_rand['STR'=>1,'DMG'=>rand(1,10)]);
+                    }
+                    }
+                }
+                elseif (($dropDecide >=28) && ($dropDecide <36)) {$droptype="offhand";}
+                elseif (($dropDecide >=36) && ($dropDecide <44)) {$droptype="helmet";}
+                elseif (($dropDecide >=44) && ($dropDecide <52)) {$droptype="torso";}
+                elseif (($dropDecide >=52) && ($dropDecide <60)) {$droptype="legs";}
+                elseif (($dropDecide >=60) && ($dropDecide <68)) {$droptype="boots";}
+                elseif (($dropDecide >=68) && ($dropDecide <76)) {$droptype="gloves";}
+                elseif (($dropDecide >=76) && ($dropDecide <84)) {$droptype="necklace";}
+                elseif (($dropDecide >=84) && ($dropDecide <92)) {$droptype="earing";}
+                elseif (($dropDecide >=92) && ($dropDecide <100)) {$droptype="ring";}
+                // dd($dropDecide, $specialabilities, $droptype, $name, $SAResults);
+            //Random loot formula END
+
             $request->session()->forget('enemy_stats'); // Remove enemy from session
             $request->session()->forget('player_stats'); // Remove player from session
             $request->session()->forget('temp_stats'); // Remove temp stats from session
-
-            //Random loot:
-            $dropDecide= rand(20,27);
-            function generateLoot($enemy['level']) {
-                $lootArray = [0, 0, 0];  // Initialize the loot array with zeros
-                $dropChance = 3 * $enemy['level'];  // Calculate drop chance based on enemy level
-                
-                foreach ($lootArray as $key => $value) {
-                    $randomNumber = rand(1, 100);  // Generate a random number between 1 and 100
-                    if ($randomNumber <= $dropChance) {
-                        // If the random number is within the drop chance, decide what to drop
-                        $itemTypeRandom = rand(1, 100);  // Another random number to decide the type of item
-                        if ($itemTypeRandom <= 75) {
-                            $lootArray[$key] = 1;  // 75% chance to drop item "1"
-                        } else {
-                            $lootArray[$key] = 2;  // 25% chance to drop item "2"
-                        }
-                    }
-                }
-                
-                return $lootArray;
-            }
-
-
-            $droptype="";
-            if (($dropDecide >=0) && ($dropDecide <20)) {$droptype="potion";}
-            elseif (($dropDecide >=20) && ($dropDecide <28)) {$droptype="weapon";}
-            elseif (($dropDecide >=28) && ($dropDecide <36)) {$droptype="offhand";}
-            elseif (($dropDecide >=36) && ($dropDecide <44)) {$droptype="helmet";}
-            elseif (($dropDecide >=44) && ($dropDecide <52)) {$droptype="torso";}
-            elseif (($dropDecide >=52) && ($dropDecide <60)) {$droptype="legs";}
-            elseif (($dropDecide >=60) && ($dropDecide <68)) {$droptype="boots";}
-            elseif (($dropDecide >=68) && ($dropDecide <76)) {$droptype="gloves";}
-            elseif (($dropDecide >=76) && ($dropDecide <84)) {$droptype="necklace";}
-            elseif (($dropDecide >=84) && ($dropDecide <92)) {$droptype="earing";}
-            elseif (($dropDecide >=92) && ($dropDecide <100)) {$droptype="ring";}
 
             return redirect()->action([GameController::class, 'loot']); // Redirect to play to spawn a new enemy
         }

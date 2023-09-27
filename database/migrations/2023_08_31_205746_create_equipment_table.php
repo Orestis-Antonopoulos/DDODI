@@ -20,9 +20,9 @@ return new class extends Migration
             $table->string('item_type');  // sword, blunt, etc.
             $table->string('item_name');
             $table->string('item_description');
-            $table->string('special_ability_1')->nullable();
-            $table->string('special_ability_2')->nullable();
-            $table->string('special_ability_3')->nullable();
+            $table->json('special_ability_1')->nullable();
+            $table->json('special_ability_2')->nullable();
+            $table->json('special_ability_3')->nullable();
             // Add more columns for other kinds of bonuses or effects
         });
     }
